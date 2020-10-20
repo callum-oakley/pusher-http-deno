@@ -20,7 +20,11 @@ if (!cluster) {
   throw new Error("Please provide CLUSTER")
 }
 
-new Client({ appId, key, secret, cluster })
-  .trigger("foo", "bar", { message: "hello world" })
-  .then(() => console.log("done"))
-  .catch((err) => console.error(err))
+const client = new Client({ appId, key, secret, cluster })
+
+try {
+  await client.trigger("foo", "bar", { message: "hello world" })
+  console.log("done")
+} catch (err) {
+  console.error(err)
+}

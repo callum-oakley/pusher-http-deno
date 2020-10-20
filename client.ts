@@ -34,7 +34,7 @@ export class Client {
     )
   }
 
-  private signedFetch(
+  private async signedFetch(
     method: string,
     path: string,
     body: string | undefined
@@ -46,20 +46,19 @@ export class Client {
       path,
       body
     )
-    return fetch(`${this.host()}${path}?${q}`, {
+    const res = await fetch(`${this.host()}${path}?${q}`, {
       method,
       headers: { "content-type": "application/json" },
       body,
-    }).then((res) => {
-      if (!res.ok) {
-        return res.text().then((body) => {
-          throw new Error(
-            `Unexpected status ${res.status} (${res.statusText}): ${body}`
-          )
-        })
-      }
-      return res
     })
+    if (!res.ok) {
+      throw new Error(
+        `Unexpected status ${res.status} (${
+          res.statusText
+        }): ${await res.text()}`
+      )
+    }
+    return res
   }
 
   private host(): string {
